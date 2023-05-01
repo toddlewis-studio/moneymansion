@@ -1,0 +1,11 @@
+Todd Lewis Coin::todos
+
+  Make early investor sale a pretty banner
+  Make a label showing the amount of tlc that will be recieved because of the sale
+  Send back 3* as many coins
+  Tx Animation revamp - Earlier load, swaggy animation, etc
+  Enforce minimum order of 100 coins on the backend
+  Test History
+  Create a graphic for wisp on the wallet-card
+
+* db create folders

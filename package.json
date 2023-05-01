@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "@metaplex-foundation/js": "^0.18.3",
+    "@solana/spl-token": "^0.3.7",
+    "@solana/web3.js": "^1.73.2",
+    "buffer": "^6.0.3",
+    "lit": "^2.6.1",
+    "node-polyfill-webpack-plugin": "^2.0.1",
+    "toml": "^3.0.0"
+  },
+  "scripts": {
+    "build": "rm dist/index.html && cp www/index.html dist && webpack"
+  },
+  "devDependencies": {
+    "css-loader": "^6.7.3",
+    "style-loader": "^3.3.1",
+    "toml": "^3.0.0",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  }
+}
