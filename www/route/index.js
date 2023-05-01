@@ -1,5 +1,6 @@
 const {LitElement, css, html, nothing} = require('lit')
 const state = require('../lib/state.js')
+const web3 = require('../lib/web3.js')
 const TwitterIcon = require('../asset/twitter.png')
 
 customElements.define('index-route', class extends LitElement {
@@ -12,8 +13,14 @@ customElements.define('index-route', class extends LitElement {
     super.disconnectedCallback()
     this.listener.forEach(off => off())
   }
+  async connect(){
+    console.log("connect")
+    await web3.connect()
+    await web3.moneyboy_balance()
+  }
   render = () => html`
     <h1>Hello World</h1>
+    <button @click="${this.connect}">Connect</button>
   `
   static styles = css``
 })

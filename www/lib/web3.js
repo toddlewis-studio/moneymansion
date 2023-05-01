@@ -1,8 +1,9 @@
 const Buffer = require('buffer')
+const { Metaplex, findMetadataPda, keypairIdentity, bundlrStorage } = require("@metaplex-foundation/js")
 const solanaWeb3 = require("@solana/web3.js")
 const splToken = require("@solana/spl-token")
 const { GetProgramAccountsFilter, Keypair, Transaction, Connection, PublicKey } = require("@solana/web3.js")
-const { TOKEN_PROGRAM_ID, createTransferCheckedInstruction, getAssociatedTokenAddress} = require("@solana/spl-token")
+const { AccountLayout, TOKEN_PROGRAM_ID, createTransferCheckedInstruction, getAssociatedTokenAddress} = require("@solana/spl-token")
 
 const http = require('./http.js')
 const state = require('./state.js')
@@ -11,6 +12,7 @@ const MainNetBeta = 'https://api.mainnet-beta.solana.com'
 const PaymentNet = 'https://api.metaplex.solana.com/'
 const ToddLewisStudio = new PublicKey('J5zkMHjsfyYUEcie5Z2yPzohXeDBFAACdUGc13k8491f')
 const ToddLewisCoin = new PublicKey('CUMJtmc2KVNrTEFHoohLSvJS3rdwqWLMhwSXSk1okntm')
+const MoneyboyUpdateAuth = '8bRrTTc1vCR3fuEBhU2Vo5ga5KjLSfrmjpC9JojcEugV'
 
 state.save`cachetx`([])
 
@@ -75,6 +77,44 @@ const tlc_balance = async () => {
         console.log("---------")
       }
   })
+}
+
+const moneyboy_balance = async () => {
+  const connection = new solanaWeb3.Connection(PaymentNet)
+  const wallet = state.load`pubkey`
+
+  const metaplex = Metaplex.make(connection)
+      .use(keypairIdentity(wallet))
+      .use(bundlrStorage())
+  
+  console.log("getting moneyboy_balance...", wallet)
+  const tokenAccounts = await connection.getTokenAccountsByOwner(
+      wallet, {programId: TOKEN_PROGRAM_ID}
+  )
+  let mints = []
+  tokenAccounts.value.forEach(tokenAccount => {
+    const accountData = AccountLayout.decode(tokenAccount.account.data);
+    if(accountData.amount == 1){
+      const mintAddress = new PublicKey(accountData.mint)
+      mints.push(mintAddress)
+    }
+  })
+  const nfts = await metaplex.nfts().findAllByMintList({ mints })
+  let moneyboys = []
+  nfts.forEach(nft => {
+    if (
+      nft.name.substring(0,16) == 'Solana Money Boy' ||
+      nft.name.substring(0,17) == 'Solana Money Girl' ||
+      nft.name.substring(0,18) == 'Solana Diamond Boy' ||
+      nft.name.substring(0,12) == 'MoneyMansion'
+    ){
+      moneyboys.push(nft)
+    } else {
+      console.log('other', nft)
+    }
+  })
+  state.save`moneyboys`(moneyboys)
+  console.log(moneyboys)
 }
 
 const send_transaction = async transaction => {
@@ -162,5 +202,5 @@ const send_tlc = async amount => {
 }
 
 module.exports = {
-  balance, tlc_balance, connect, send_tlc
+  balance, tlc_balance, connect, send_tlc, moneyboy_balance
 }
