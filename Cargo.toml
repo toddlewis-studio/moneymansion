@@ -6,3 +6,18 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+serde = { version = "1.0", features = ["derive"] }
+mpl-token-metadata = "1.7.0"
+clap = {version = "4.0.26", features = ["derive"]}
+solana-sdk = "1.14.5"
+solana-client = "1.14.5"
+tiny-bip39 = "0.8.2"
+chrono = "0.4.22"
+spl-token = "3.5.0"
+spl-associated-token-account = "1.1.2"
+solana-transaction-status = "1.15.2"
+toml = "0.7.2"
+
+[dependencies.rocket]
+version = "0.5.0-rc.1"
+features = ["json"]
