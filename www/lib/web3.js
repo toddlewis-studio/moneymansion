@@ -100,21 +100,36 @@ const moneyboy_balance = async () => {
     }
   })
   const nfts = await metaplex.nfts().findAllByMintList({ mints })
-  let moneyboys = []
+  let money = {
+    boys: [],
+    girls: [],
+    diamonds: [],
+    mansions: []
+  }
+  let moneyNfts = []
   nfts.forEach(nft => {
-    if (
-      nft.name.substring(0,16) == 'Solana Money Boy' ||
-      nft.name.substring(0,17) == 'Solana Money Girl' ||
-      nft.name.substring(0,18) == 'Solana Diamond Boy' ||
-      nft.name.substring(0,12) == 'MoneyMansion'
-    ){
-      moneyboys.push(nft)
-    } else {
-      console.log('other', nft)
-    }
+    if (nft.name.substring(0,16) == 'Solana Money Boy'
+    || nft.name.substring(0,17) == 'Solana Money Girl'
+    || nft.name.substring(0,18) == 'Solana Diamond Boy'
+    || nft.name.substring(0,12) == 'MoneyMansion')
+    moneyNfts.push(nft)
   })
-  state.save`moneyboys`(moneyboys)
-  console.log(moneyboys)
+  await Promise.all(moneyNfts.map(async nft => {
+    const meta = await fetch(nft.uri)
+    const json = await meta.json()
+    if (nft.name.substring(0,16) == 'Solana Money Boy')
+      money.boys.push(json)
+    else if (nft.name.substring(0,17) == 'Solana Money Girl')
+      money.girls.push(json)
+    else if (nft.name.substring(0,18) == 'Solana Diamond Boy')
+      money.diamonds.push(json)
+    else if (nft.name.substring(0,12) == 'MoneyMansion')
+      money.mansions.push(json)
+    return json
+  }))
+ 
+  state.save`inventory`(money)
+  console.log(money)
 }
 
 const send_transaction = async transaction => {
